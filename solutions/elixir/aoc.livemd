@@ -31,9 +31,9 @@ end
 ```elixir
 defmodule Day1 do
   @input day_1_input |> String.split()
-  @digits_table ["_", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
+  @digits_table ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"]
                 |> Enum.with_index()
-                |> Map.new(fn {k, v} -> {k, "#{v}"} end)
+                |> Map.new(fn {k, v} -> {k, "#{v + 1}"} end)
 
   def solve(1) do
     @input
