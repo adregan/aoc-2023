@@ -6,6 +6,19 @@ Mix.install([
 ])
 ```
 
+## Utils
+
+```elixir
+defmodule AOC do
+  def solve(module) do
+    for part <- 1..2 do
+      apply(module, :solve, [part])
+      |> then(&IO.inspect("Part #{part}: #{inspect(&1)}"))
+    end
+  end
+end
+```
+
 ## Day 1
 
 <!-- livebook:{"attrs":{"assign_to":"day_1_input","day":"1","session_secret":"AOC_SESSION","year":"2023"},"chunks":null,"kind":"Elixir.KinoAOC.HelperCell","livebook_object":"smart_cell"} -->
