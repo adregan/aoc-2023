@@ -127,7 +127,17 @@ defmodule Day2 do
     end)
   end
 
-  def solve(2), do: nil
+  def solve(2) do
+    @input
+    |> parse_games()
+    |> Enum.map(&minimum_cubes/1)
+    |> Enum.map(fn rounds ->
+      rounds
+      |> Enum.map(fn {_color, count} -> count end)
+      |> Enum.product()
+    end)
+    |> Enum.sum()
+  end
 
   defp parse_games(input) do
     for game <- String.splitter(input, "\n", trim: true) do
@@ -149,7 +159,17 @@ defmodule Day2 do
     end
     |> Enum.all?()
   end
+
+  defp minimum_cubes(rounds) do
+    rounds
+    |> Enum.flat_map(&String.split(&1, ",\s"))
+    |> Enum.group_by(
+      fn turn -> Regex.run(~r/(red|green|blue)/, turn) |> List.first() end,
+      fn turn -> Regex.run(~r/\d+/, turn) |> List.first() |> String.to_integer() end
+    )
+    |> Enum.map(fn {k, v} -> {k, Enum.max(v)} end)
+  end
 end
 
-Day2.solve(1)
+AOC.solve(Day2)
 ```
