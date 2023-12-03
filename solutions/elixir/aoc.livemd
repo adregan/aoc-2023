@@ -97,20 +97,59 @@ AOC.solve(Day1)
 ```
 
 ```elixir
-day_2_sample = """
-Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
-Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
-Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
-Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
-Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
-"""
+day_2_sample =
+  """
+  Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
+  Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
+  Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
+  Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
+  Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
+  """
+  |> String.trim()
 ```
 
 ```elixir
 defmodule Day2 do
-  def solve(1), do: nil
+  @input day_2_input
+  @limits %{
+    "red" => 12,
+    "green" => 13,
+    "blue" => 14
+  }
+
+  def solve(1) do
+    @input
+    |> parse_games()
+    |> Enum.map(&are_rounds_possible?/1)
+    |> Enum.with_index(1)
+    |> Enum.reduce(0, fn {possible?, idx}, acc ->
+      if possible?, do: acc + idx, else: acc
+    end)
+  end
+
   def solve(2), do: nil
+
+  defp parse_games(input) do
+    for game <- String.splitter(input, "\n", trim: true) do
+      ~r/(?:Game \d+: )(.*)/
+      |> Regex.run(game, capture: :all_but_first)
+      |> List.first()
+      |> String.split(";\s")
+    end
+  end
+
+  defp are_rounds_possible?(rounds) do
+    for round <- rounds do
+      String.split(round, ",\s")
+      |> Enum.map(fn turn ->
+        [num, color] = String.split(turn)
+        Map.get(@limits, color) >= String.to_integer(num)
+      end)
+      |> Enum.all?()
+    end
+    |> Enum.all?()
+  end
 end
 
-AOC.solve(Day2)
+Day2.solve(1)
 ```
