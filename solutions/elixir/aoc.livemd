@@ -161,3 +161,55 @@ end
 
 AOC.solve(Day2)
 ```
+
+## Day 4
+
+<!-- livebook:{"attrs":{"assign_to":"day_4_input","day":"4","session_secret":"AOC_SESSION","year":"2023"},"chunks":null,"kind":"Elixir.KinoAOC.HelperCell","livebook_object":"smart_cell"} -->
+
+```elixir
+{:ok, day_4_input} =
+  KinoAOC.download_puzzle("2023", "4", System.fetch_env!("LB_AOC_SESSION"))
+```
+
+```elixir
+day_4_sample =
+  """
+  Card 1: 41 48 83 86 17 | 83 86  6 31 17  9 48 53
+  Card 2: 13 32 20 16 61 | 61 30 68 82 17 32 24 19
+  Card 3:  1 21 53 59 44 | 69 82 63 72 16 21 14  1
+  Card 4: 41 92 73 84 69 | 59 84 76 51 58  5 54 83
+  Card 5: 87 83 26 28 32 | 88 30 70 12 93 22 82 36
+  Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11
+  """
+  |> String.trim()
+```
+
+```elixir
+defmodule Day4 do
+  @input day_4_input |> String.split("\n", trim: true)
+  def solve(1) do
+    @input
+    |> Enum.map(fn card ->
+      card
+      |> String.replace(~r/^Card\s+\d+:\s+/, "")
+      |> String.split(" | ")
+      |> Enum.map(&string_to_set/1)
+      |> then(&apply(MapSet, :intersection, &1))
+      |> MapSet.size()
+    end)
+    |> Enum.filter(fn x -> x > 0 end)
+    |> Enum.map(fn winners ->
+      for n <- 1..winners, reduce: 1 do
+        acc -> if n == 1, do: acc, else: acc * 2
+      end
+    end)
+    |> Enum.sum()
+  end
+
+  defp string_to_set(s) do
+    String.split(s) |> Enum.map(&String.to_integer/1) |> MapSet.new()
+  end
+end
+
+Day4.solve(1)
+```
